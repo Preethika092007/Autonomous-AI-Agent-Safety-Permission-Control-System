@@ -1,0 +1,48 @@
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python cache and temporary files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Local databases and logs
+*.db
+*.log
+backend/app.db
+backend/app/app.db
+
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist/
+
+# Environment configurations and keys
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+*.key
+
+# IDEs & System files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.gemini/
+.agents/
+
+# Hugging Face local cache directories
+hf_*/
+xet/
+xet_*/

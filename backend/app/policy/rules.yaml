@@ -1,0 +1,34 @@
+version: "1.0.0"
+roles:
+  ResearchAgent:
+    allowed_actions:
+      - read_file
+      - scrape_web
+      - check_status
+    max_risk_allowed: low
+    explicit_blocked_actions:
+      - execute_bash
+      - execute_sql
+      - delete_database
+
+  DeveloperAgent:
+    allowed_actions:
+      - read_file
+      - write_file
+      - execute_bash
+      - write_config
+    max_risk_allowed: medium
+    explicit_blocked_actions:
+      - delete_database
+      - drop_table
+
+  OperationsAgent:
+    allowed_actions:
+      - read_file
+      - write_file
+      - execute_bash
+      - write_config
+      - delete_database
+      - restart_service
+    max_risk_allowed: high
+    explicit_blocked_actions: []

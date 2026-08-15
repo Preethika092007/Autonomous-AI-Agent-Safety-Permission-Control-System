@@ -1,0 +1,819 @@
+openapi: 3.1.0
+info:
+  title: Autonomous AI Agent Safety & Permission Control System
+  description: Local middleware firewall intercepting agent actions, scoring risk,
+    and enforcing policy.
+  version: 1.0.0
+paths:
+  /api/v1/operator/login:
+    post:
+      tags:
+      - Operator
+      summary: Login Operator
+      operationId: login_operator_api_v1_operator_login_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_login_operator_api_v1_operator_login_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperatorLoginResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/operator/logout:
+    post:
+      tags:
+      - Operator
+      summary: Logout Operator
+      operationId: logout_operator_api_v1_operator_logout_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/operator/me:
+    get:
+      tags:
+      - Operator
+      summary: Get Operator Me
+      operationId: get_operator_me_api_v1_operator_me_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/agents/:
+    get:
+      tags:
+      - Agent Management
+      summary: List Agents
+      operationId: list_agents_api_v1_agents__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AgentInfo'
+                type: array
+                title: Response List Agents Api V1 Agents  Get
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/agents/{agent_id}:
+    get:
+      tags:
+      - Agent Management
+      summary: Get Agent
+      operationId: get_agent_api_v1_agents__agent_id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentInfo'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/agents/{agent_id}/status:
+    patch:
+      tags:
+      - Agent Management
+      summary: Update Agent Status
+      operationId: update_agent_status_api_v1_agents__agent_id__status_patch
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentStatusUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/agents/{agent_id}/rotate-key:
+    post:
+      tags:
+      - Agent Management
+      summary: Rotate Agent Key
+      operationId: rotate_agent_key_api_v1_agents__agent_id__rotate_key_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/models:
+    get:
+      tags:
+      - Model Governance
+      summary: List Models
+      description: List all registered models.
+      operationId: list_models_api_v1_models_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  additionalProperties: true
+                  type: object
+                type: array
+                title: Response List Models Api V1 Models Get
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/models/health:
+    get:
+      tags:
+      - Model Governance
+      summary: Get Model Health
+      description: Retrieve runtime model health status and data drift statistics.
+      operationId: get_model_health_api_v1_models_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Get Model Health Api V1 Models Health Get
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/models/{model_version}:
+    get:
+      tags:
+      - Model Governance
+      summary: Get Model Details
+      description: Retrieve details of a registered model.
+      operationId: get_model_details_api_v1_models__model_version__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: model_version
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Model Version
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Get Model Details Api V1 Models  Model Version  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/models/{model_version}/activate:
+    post:
+      tags:
+      - Model Governance
+      summary: Activate Model
+      description: Activate a model version atomically.
+      operationId: activate_model_api_v1_models__model_version__activate_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: model_version
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Model Version
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+                title: Response Activate Model Api V1 Models  Model Version  Activate
+                  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/models/rollback:
+    post:
+      tags:
+      - Model Governance
+      summary: Rollback Model
+      description: Rollback to the most recently active/retired compatible model.
+      operationId: rollback_model_api_v1_models_rollback_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Rollback Model Api V1 Models Rollback Post
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/health:
+    get:
+      summary: Get Health
+      operationId: get_health_api_v1_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/v1/readiness:
+    get:
+      summary: Get Readiness
+      operationId: get_readiness_api_v1_readiness_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /api/v1/metrics:
+    get:
+      summary: Metrics
+      operationId: metrics_api_v1_metrics_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/v1/agents/register:
+    post:
+      summary: Register Agent
+      description: 'Register a new AI agent and issue a plaintext API key.
+
+
+        The plaintext key is returned ONCE.  The caller must store it securely and
+
+        pass it as the X-Agent-Key header on every /evaluate-action call.
+
+
+        Idempotent: if the agent_id already exists and is already registered (has
+        a
+
+        key hash), returns 409 Conflict.
+
+
+        The assigned role must be one of: ResearchAgent, DeveloperAgent, OperationsAgent.
+
+        The role cannot be changed after registration (Phase 3 will add management
+        APIs).'
+      operationId: register_agent_api_v1_agents_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentRegisterRequest'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRegisterResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/audit-log:
+    get:
+      summary: Get Audit Log
+      operationId: get_audit_log_api_v1_audit_log_get
+      parameters:
+      - name: agent_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter logs by Agent ID
+          title: Agent Id
+        description: Filter logs by Agent ID
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuditLogItem'
+                title: Response Get Audit Log Api V1 Audit Log Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/evaluate-action:
+    post:
+      summary: Evaluate Action
+      description: "Core firewall evaluation endpoint.\n\nPipeline order (Phase 2):\n\
+        \    1. Authentication (X-Agent-Key validation) \u2190 NEW\n    2. Rate limiting\
+        \ (Redis counter)\n    3. Agent DB get-or-create\n    4. ML Risk Engine (SentenceTransformer\
+        \ + XGBoost)\n    5. Policy Engine (RBAC)\n    6. PostgreSQL persistence\n\
+        \    7. WebSocket broadcast (if human approval required)\n\nAUTH_ENABLED=true:\n\
+        \    - X-Agent-Key is mandatory.\n    - agent_id and role are derived from\
+        \ the AUTHENTICATED credential.\n    - Self-reported agent_id in the request\
+        \ body is IGNORED for identity.\n      (It is still used to produce useful\
+        \ audit log entries; the actual\n       authoritative identity is the credential-bound\
+        \ agent.)\n\nAUTH_ENABLED=false (Phase 1 compatibility):\n    - X-Agent-Key\
+        \ is optional.\n    - agent_id and role fall back to self-reported + substring\
+        \ matching."
+      operationId: evaluate_action_api_v1_evaluate_action_post
+      parameters:
+      - name: X-Agent-Key
+        in: header
+        required: false
+        schema:
+          type: string
+          title: X-Agent-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActionEvaluationRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionEvaluationResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/approve-action:
+    post:
+      summary: Approve Action
+      operationId: approve_action_api_v1_approve_action_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApprovalResolutionRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApprovalResolutionResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+components:
+  schemas:
+    ActionEvaluationRequest:
+      properties:
+        agent_id:
+          type: string
+          title: Agent Id
+          description: Unique identifier for the AI agent
+        action:
+          type: string
+          title: Action
+          description: Action name or type being attempted
+        parameters:
+          additionalProperties: true
+          type: object
+          title: Parameters
+          description: Parameters associated with the action
+        requested_at:
+          type: string
+          title: Requested At
+          description: ISO-8601 timestamp of the request
+      type: object
+      required:
+      - agent_id
+      - action
+      - requested_at
+      title: ActionEvaluationRequest
+    ActionEvaluationResponse:
+      properties:
+        decision:
+          type: string
+          title: Decision
+          description: 'Decision: allow | block | require_human_approval'
+        risk_level:
+          type: string
+          title: Risk Level
+          description: 'Risk Level: low | medium | high'
+        reason:
+          type: string
+          title: Reason
+          description: Explanation of the evaluation decision
+        model_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model Version
+        feature_schema_version:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Feature Schema Version
+        policy_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Policy Version
+        request_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Request Id
+      type: object
+      required:
+      - decision
+      - risk_level
+      - reason
+      title: ActionEvaluationResponse
+    AgentInfo:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        role:
+          type: string
+          title: Role
+        is_active:
+          type: boolean
+          title: Is Active
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        active_credential_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Active Credential Id
+      type: object
+      required:
+      - id
+      - name
+      - role
+      - is_active
+      - created_at
+      title: AgentInfo
+    AgentRegisterRequest:
+      properties:
+        agent_id:
+          type: string
+          title: Agent Id
+          description: Unique identifier for the AI agent
+        name:
+          type: string
+          title: Name
+          description: Human-readable agent name
+        role:
+          type: string
+          title: Role
+          description: 'RBAC role: ResearchAgent | DeveloperAgent | OperationsAgent'
+      type: object
+      required:
+      - agent_id
+      - name
+      - role
+      title: AgentRegisterRequest
+    AgentRegisterResponse:
+      properties:
+        agent_id:
+          type: string
+          title: Agent Id
+        role:
+          type: string
+          title: Role
+        api_key:
+          type: string
+          title: Api Key
+          description: "Plaintext API key \u2014 shown ONCE. Store it securely. Pass\
+            \ it in X-Agent-Key header."
+        message:
+          type: string
+          title: Message
+      type: object
+      required:
+      - agent_id
+      - role
+      - api_key
+      - message
+      title: AgentRegisterResponse
+    AgentStatusUpdate:
+      properties:
+        is_active:
+          type: boolean
+          title: Is Active
+      type: object
+      required:
+      - is_active
+      title: AgentStatusUpdate
+    ApprovalResolutionRequest:
+      properties:
+        approval_id:
+          type: string
+          title: Approval Id
+          description: The ID of the pending approval record to resolve
+        status:
+          type: string
+          title: Status
+          description: 'The status of approval: approved | rejected'
+      type: object
+      required:
+      - approval_id
+      - status
+      title: ApprovalResolutionRequest
+    ApprovalResolutionResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+        approval_id:
+          type: string
+          title: Approval Id
+        resolution:
+          type: string
+          title: Resolution
+      type: object
+      required:
+      - status
+      - approval_id
+      - resolution
+      title: ApprovalResolutionResponse
+    AuditLogItem:
+      properties:
+        id:
+          type: string
+          title: Id
+        agent_id:
+          type: string
+          title: Agent Id
+        action:
+          type: string
+          title: Action
+        parameters:
+          additionalProperties: true
+          type: object
+          title: Parameters
+        requested_at:
+          type: string
+          title: Requested At
+        decision:
+          type: string
+          title: Decision
+        risk_level:
+          type: string
+          title: Risk Level
+        reason:
+          type: string
+          title: Reason
+        evaluated_at:
+          type: string
+          title: Evaluated At
+        model_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Model Version
+        feature_schema_version:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Feature Schema Version
+        policy_version:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Policy Version
+        request_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Request Id
+        evaluation_timestamp:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Evaluation Timestamp
+      type: object
+      required:
+      - id
+      - agent_id
+      - action
+      - parameters
+      - requested_at
+      - decision
+      - risk_level
+      - reason
+      - evaluated_at
+      title: AuditLogItem
+    Body_login_operator_api_v1_operator_login_post:
+      properties:
+        grant_type:
+          anyOf:
+          - type: string
+            pattern: ^password$
+          - type: 'null'
+          title: Grant Type
+        username:
+          type: string
+          title: Username
+        password:
+          type: string
+          format: password
+          title: Password
+        scope:
+          type: string
+          title: Scope
+          default: ''
+        client_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Client Id
+        client_secret:
+          anyOf:
+          - type: string
+          - type: 'null'
+          format: password
+          title: Client Secret
+      type: object
+      required:
+      - username
+      - password
+      title: Body_login_operator_api_v1_operator_login_post
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    HealthResponse:
+      properties:
+        status:
+          type: string
+          title: Status
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        services:
+          additionalProperties:
+            type: string
+          type: object
+          title: Services
+      type: object
+      required:
+      - status
+      - timestamp
+      title: HealthResponse
+    OperatorLoginResponse:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        token_type:
+          type: string
+          title: Token Type
+          default: bearer
+        role:
+          type: string
+          title: Role
+      type: object
+      required:
+      - access_token
+      - role
+      title: OperatorLoginResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: /api/v1/operator/login
