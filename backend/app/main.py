@@ -1,3 +1,20 @@
+import os
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
+
+try:
+    import torch
+    torch.set_num_threads(1)
+    torch.set_grad_enabled(False)
+except ImportError:
+    pass
+
+import gc
+gc.collect()
+
 from contextlib import asynccontextmanager
 import uuid
 import sys
