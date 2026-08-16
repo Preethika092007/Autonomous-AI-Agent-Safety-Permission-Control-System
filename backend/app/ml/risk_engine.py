@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import numpy as np
 import xgboost as xgb
 import shap
-from sentence_transformers import SentenceTransformer
+from app.ml.vectorizer import AuraVectorizer
 from app.core.config import settings
 from app.core.metrics import (
     model_load_errors_counter,
@@ -38,10 +38,10 @@ class RiskEngine:
         self.registry_dir = os.path.join(base_dir, "registry")
         self.forced_model_path = model_path
         
-        # Initialize SentenceTransformer
-        logger.info("Loading sentence-transformers/all-MiniLM-L6-v2 model...")
-        self.vectorizer = SentenceTransformer("all-MiniLM-L6-v2")
-        logger.info("SentenceTransformer loaded.")
+        # Initialize Vectorizer
+        logger.info("Loading ML vectorizer...")
+        self.vectorizer = AuraVectorizer()
+        logger.info("ML vectorizer loaded.")
 
         # Initialize Drift Monitor
         from app.ml.drift import DriftMonitor

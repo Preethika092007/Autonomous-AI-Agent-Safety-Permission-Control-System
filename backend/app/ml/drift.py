@@ -4,7 +4,7 @@ import time
 import threading
 import numpy as np
 from typing import Dict, Any, List, Tuple
-from sentence_transformers import SentenceTransformer
+from app.ml.vectorizer import AuraVectorizer
 from app.core.config import settings
 
 class DriftMonitor:
@@ -41,7 +41,7 @@ class DriftMonitor:
             
             # We need a vectorizer to compute baseline norms
             if vectorizer is None:
-                vectorizer = SentenceTransformer("all-MiniLM-L6-v2")
+                vectorizer = AuraVectorizer()
                 
             texts = []
             for item in data:

@@ -11,6 +11,7 @@ scikit-learn
 xgboost
 shap
 sentence-transformers
+fastembed>=0.3.3
 numpy
 python-multipart>=0.0.9
 bcrypt>=4.1.0

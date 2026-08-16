@@ -5,7 +5,7 @@ import hashlib
 from datetime import datetime, timezone
 import numpy as np
 import xgboost as xgb
-from sentence_transformers import SentenceTransformer
+from app.ml.vectorizer import AuraVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, confusion_matrix
 
@@ -80,9 +80,9 @@ def train_model(version: str = "1.0.0", dataset_path: str = None):
     
     print(f"Split sizes -> Train: {len(X_train_t)}, Val: {len(X_val_t)}, Test: {len(X_test_t)}")
     
-    # 4. Vectorize text features using SentenceTransformer
-    print("Loading SentenceTransformer model 'all-MiniLM-L6-v2'...")
-    vectorizer = SentenceTransformer("all-MiniLM-L6-v2")
+    # 4. Vectorize text features using AuraVectorizer
+    print("Loading AuraVectorizer model 'all-MiniLM-L6-v2'...")
+    vectorizer = AuraVectorizer()
     
     print("Vectorizing train/val splits...")
     X_train = vectorizer.encode(X_train_t.tolist())
